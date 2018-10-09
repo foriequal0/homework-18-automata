@@ -42,7 +42,8 @@ struct NFA {
                                        const alphabet_type& alphabet) const;
   std::set<NFA::state_type> E(const state_type& state) const;
   std::set<NFA::state_type> E(const std::set<state_type>& states) const;
-
+  bool is_accepted(const state_type& state) const;
+  bool is_accepted(const std::set<state_type>& states) const;
   DFA into_dfa() const;
   bool run(std::vector<alphabet_type> string) const;
 };

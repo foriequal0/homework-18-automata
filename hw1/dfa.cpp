@@ -7,13 +7,10 @@ DFA::DFA(state_type initial, std::vector<alphabet_type> alphabets)
     initial_state(initial)
 { }
 
-
+/* Write DFA into stream */
 void DFA::write(std::ostream & os) const {
   os << states.size() << std::endl;
-  std::vector<state_type> sorted_states;
-  std::copy(std::begin(states), std::end(states), std::back_inserter(sorted_states));
-  std::sort(std::begin(sorted_states), std::end(sorted_states));
-  for(auto state: sorted_states) {
+  for(auto state: states) {
     os << state;
     if (final_states.find(state) != std::end(final_states)) {
       os << " " << "1";
