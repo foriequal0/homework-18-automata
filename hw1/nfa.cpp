@@ -142,9 +142,7 @@ std::set<NFA::state_type> NFA::transitions
 (const state_type& state,
  const std::vector<alphabet_type>& str) const
 {
-  /* From E(q0) */
-  std::set<NFA::state_type> states = E(state);
-  /* Transition from every alphabets */
+  auto states = E(state);
   for(auto x: str) {
     states = E(transition(states, x));
   }
