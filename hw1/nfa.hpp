@@ -36,16 +36,18 @@ struct NFA {
 
   void write(std::ostream& os) const;
 
+  std::set<NFA::state_type> E(const state_type& state) const;
+  std::set<NFA::state_type> E(const std::set<state_type>& states) const;
   std::set<NFA::state_type> transition(const state_type& state,
                                        const alphabet_type& alphabet) const;
   std::set<NFA::state_type> transition(const std::set<state_type>& state,
                                        const alphabet_type& alphabet) const;
-  std::set<NFA::state_type> E(const state_type& state) const;
-  std::set<NFA::state_type> E(const std::set<state_type>& states) const;
+  std::set<NFA::state_type> transitions(const state_type& state,
+                                        const std::vector<alphabet_type>& str) const;
   bool is_accepted(const state_type& state) const;
   bool is_accepted(const std::set<state_type>& states) const;
   DFA into_dfa() const;
-  bool run(std::vector<alphabet_type> string) const;
+  bool run(const std::vector<alphabet_type>& string) const;
 };
 
 #endif

@@ -80,33 +80,6 @@ void NFA::write(std::ostream & os) const {
   }
 }
 
-/* Transition by a alphabet from a state */
-std::set<NFA::state_type> NFA::transition(const state_type& state,
-                                          const alphabet_type& alphabet) const
-{
-  std::set<NFA::state_type> result;
-  auto outs = transition_map.find(transition_in_type(state, alphabet));
-  if (outs == std::end(transition_map))
-    return result;
-
-  for(auto out: outs->second) {
-    result.insert(out);
-  }
-  return result;
-}
-
-/* Transition by a alphabet from a set of states */
-std::set<NFA::state_type> NFA::transition(const std::set<state_type>& states,
-                                          const alphabet_type& alphabet) const
-{
-  std::set<NFA::state_type> result;
-  for(auto state: states) {
-    auto nexts = transition(state, alphabet);
-    result.insert(RANGE(nexts));
-  }
-  return result;
-}
-
 /* Returns a set of all states that can be reached by transitions using epsilon from a state */
 std::set<NFA::state_type> NFA::E(const state_type& start_state) const {
   std::set<NFA::state_type> result;
@@ -136,6 +109,48 @@ std::set<NFA::state_type> NFA::E(const std::set<state_type>& states) const {
   }
   return result;
 }
+
+/* Transition by a alphabet from a state */
+std::set<NFA::state_type> NFA::transition(const state_type& state,
+                                          const alphabet_type& alphabet) const
+{
+  std::set<NFA::state_type> result;
+  auto outs = transition_map.find(transition_in_type(state, alphabet));
+  if (outs == std::end(transition_map))
+    return result;
+
+  for(auto out: outs->second) {
+    result.insert(out);
+  }
+  return result;
+}
+
+/* Transition by a alphabet from a set of states */
+std::set<NFA::state_type> NFA::transition(const std::set<state_type>& states,
+                                          const alphabet_type& alphabet) const
+{
+  std::set<NFA::state_type> result;
+  for(auto state: states) {
+    auto nexts = transition(state, alphabet);
+    result.insert(RANGE(nexts));
+  }
+  return result;
+}
+
+/* Transition by a alphabet from a set of states */
+std::set<NFA::state_type> NFA::transitions
+(const state_type& state,
+ const std::vector<alphabet_type>& str) const
+{
+  /* From E(q0) */
+  std::set<NFA::state_type> states = E(state);
+  /* Transition from every alphabets */
+  for(auto x: str) {
+    states = E(transition(states, x));
+  }
+  return states;
+}
+
 
 /* Helper type to use a set as a key for the unordered_map */
 template<typename T>
@@ -253,12 +268,6 @@ DFA NFA::into_dfa() const {
   return dfa;
 }
 
-bool NFA::run(std::vector<alphabet_type> str) const {
-  /* From E(q0) */
-  std::set<NFA::state_type> state = E(initial_state);
-  /* Transition from every alphabets */
-  for(auto x: str) {
-    state = E(transition(state, x));
-  }
-  return is_accepted(state);
+bool NFA::run(const std::vector<alphabet_type>& str) const {
+  return is_accepted(transitions(initial_state, str));
 }
