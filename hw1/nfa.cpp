@@ -225,9 +225,12 @@ DFA NFA::into_dfa() const {
   std::copy_if(RANGE(alphabets), std::back_inserter(dfa_alphabets),
                [](const auto &a) { return a != NFA::epsilon; });
   std::map<DFA::transition_in_type, DFA::transition_out_type> dfa_transition_map;
-  std::set<DFA::state_type> dfa_final_states;
   std::set<DFA::state_type> dfa_states;
+  std::set<DFA::state_type> dfa_final_states;
   dfa_states.insert(initial_dfa_state); // Qd <- { E(q0) }
+  if (is_accepted(initial_nfa_state)) {
+    dfa_final_states.insert(initial_dfa_state);
+  }
 
   std::queue<std::set<NFA::state_type>> to_visit;
   to_visit.push(initial_nfa_state); // mark E(q0)
@@ -246,16 +249,15 @@ DFA NFA::into_dfa() const {
       auto transition_in = DFA::transition_in_type(dfa_state, alphabet);
       dfa_transition_map[transition_in] = next_dfa_state;
       /* if R is not in Qd then */
-      if (dfa_states.find(next_dfa_state) != std::end(dfa_states)) {
-        continue;
+      if (dfa_states.find(next_dfa_state) == std::end(dfa_states)) {
+        /* add R to Qd */
+        dfa_states.insert(next_dfa_state);
+        if (is_accepted(next_nfa_state)) {
+          dfa_final_states.insert(next_dfa_state);
+        }
+        /* R as marked state */
+        to_visit.push(next_nfa_state);
       }
-      /* add R to Qd */
-      dfa_states.insert(next_dfa_state);
-      if (is_accepted(next_nfa_state)) {
-        dfa_final_states.insert(next_dfa_state);
-      }
-      /* R as marked state */
-      to_visit.push(next_nfa_state);
     }
   }
 
