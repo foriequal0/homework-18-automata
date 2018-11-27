@@ -1,0 +1,84 @@
+- 0
+# # R at_least_one_1
+
+- at_least_one_1
+# # S halt
+1 0 R convert_1_to_0
+
+- convert_1_to_0
+1 0 R convert_1_to_0
+# # S increase_counter1
+
+- increase_counter1
+0 0 R increase_counter1
+1 1 R increase_counter1
+# 1 S copy_counter:mark_a
+
+- copy_counter:mark_a
+a a L copy_counter:mark_a
+b b L copy_counter:mark_a
+1 a R copy_counter:increase_counter2
+0 0 R copy_counter:unmark_a
+
+- copy_counter:increase_counter2
+a a R copy_counter:increase_counter2
+b b R copy_counter:increase_counter2
+# b S copy_counter:mark_a
+
+- copy_counter:unmark_a
+a 1 R copy_counter:unmark_a
+b b S sqrt:mark_d
+
+- sqrt:mark_d
+# # L sqrt:remove_d
+c c R sqrt:mark_d
+1 1 R sqrt:mark_d
+d d R sqrt:mark_d
+b d L sqrt:mark_dc
+
+- sqrt:return_to_mark_d
+b b L sqrt:return_to_mark_d
+1 1 R sqrt:mark_d
+
+- sqrt:mark_dc
+d d L sqrt:mark_dc
+1 1 L sqrt:mark_dc
+c c L sqrt:mark_dc
+0 c R sqrt:mark_d
+
+- sqrt:remove_d
+d # L sqrt:return_to_mark_b
+
+- sqrt:clear_or_mark_bc
+# # L sqrt:clear
+d b L sqrt:mark_bc
+
+- sqrt:mark_b
+c c R sqrt:mark_b
+1 1 R sqrt:mark_b
+b b R sqrt:mark_b
+d b L sqrt:mark_bc
+# # L sqrt:return_to_mark_d
+
+- sqrt:return_to_mark_b
+d d L sqrt:return_to_mark_b
+1 1 R sqrt:clear_or_mark_bc
+
+- sqrt:mark_bc
+b b L sqrt:mark_bc
+1 1 L sqrt:mark_bc
+c c L sqrt:mark_bc
+0 c R sqrt:mark_b
+
+- sqrt:clear
+1 1 L sqrt:clear
+c 0 L sqrt:clear
+0 0 R increase_counter1
+# # R clear_zeros
+
+- clear_zeros
+0 # R clear_zeros
+1 1 S halt
+
+h halt
+=
